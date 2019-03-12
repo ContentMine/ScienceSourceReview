@@ -1,0 +1,9 @@
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/ContentMine/wikibase"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/ContentMine/wikibase
+	url = git@github.com:ContentMine/wikibase.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/mrjones/oauth"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/mrjones/oauth
+	url = https://github.com/mrjones/oauth.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/mux"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/mux
+	url = https://github.com/gorilla/mux.git
