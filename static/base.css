@@ -55,3 +55,18 @@ div#content th {
     background-color: #eaecf0;
     text-align: center;
 }
+
+
+div.flexouter {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+div.flexinner {
+}
+
+iframe {
+    width: 700px;
+    height: 500px;
+}
