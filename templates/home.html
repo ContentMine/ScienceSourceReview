@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Science Source</h1>
+
+    <table>
+        <tbody>
+            {% for article in articles %}
+                <tr>
+                    <td>
+                        <a href="/article/{{ article.RawItemID }}/">{{ article.RawItemID }}</a>
+                    </td>
+                    <td>
+                        {{ article.Title }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

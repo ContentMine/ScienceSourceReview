@@ -7,3 +7,9 @@
 [submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/mux"]
 	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/mux
 	url = https://github.com/gorilla/mux.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/flosch/pongo2"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/flosch/pongo2
+	url = https://github.com/flosch/pongo2.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/juju/errors"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/juju/errors
+	url = https://github.com/juju/errors.git

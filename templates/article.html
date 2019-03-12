@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{ title }}</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    Direct Link To Article
+                </th>
+                <td>
+                    <a href="{{article.ItemID}}">{{article.ItemID}}</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Annotations</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Term</th>
+                <th>Occurence Count</th>
+                <th>Dictionary</th>
+        </thead>
+        <tbody>
+            {% for term, annotation in annotations %}
+                <tr>
+                    <td>{{ term }}</td>
+                    <td>{{ annotation.Count }}</td>
+                    <td>{{ annotation.Dictionary }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
