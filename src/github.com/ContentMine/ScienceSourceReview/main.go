@@ -163,6 +163,8 @@ func main() {
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/article/{id:Q[0-9]+}/", articleHandler)
 
+    r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "0.0.0.0:4242",

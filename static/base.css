@@ -1,0 +1,57 @@
+body {
+    background: #f6f6f6;
+    color: black;
+    font-family: sans-serif;
+}
+
+div#header a {
+    text-decoration: none;
+    color: black;
+}
+
+div#content {
+    background: white;
+    padding: 1.25em 1.5em 1.5em 1.5em;
+    line-height: 1.6;
+    font-size: 0.875em;
+    border: 1px solid #a7d7f9;
+}
+
+div#content h1 {
+    border-bottom: 1px solid #a2a9b1;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    line-height: 1.3;
+    margin-bottom: 0.25em;
+    padding: 0px;
+}
+
+div#content h2 {
+    border-bottom: 1px solid #a2a9b1;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    line-height: 1.3;
+    font-size: 1.5em
+    margin-top: 1em;
+    margin-bottom: 0.25em;
+    padding: 0px;
+}
+
+div#content table {
+    color: #222;
+    margin: 1em 0;
+    border-collapse: collapse;
+    font-size: 100%;
+}
+
+div#content td {
+    border: 1px solid #a2a9b1;
+    padding: 0.2em 0.4em;
+    text-align: center;
+}
+
+div#content th {
+    border: 1px solid #a2a9b1;
+    padding: 0.2em 0.4em;
+    font-weight: bold;
+    background-color: #eaecf0;
+    text-align: center;
+}

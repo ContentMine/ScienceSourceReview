@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>ScienceSource: {{ title }}</title>
+        <title>ScienceSource Review{{ title }}</title>
+        <link rel="stylesheet" href="/static/base.css">
     </head>
     <body>
-        {% block content %}{% endblock %}
+        <div id="header">
+            <h1><a href="/">Science Source Review</a></h1>
+        </div>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div id="footer">
+        </div>
     </body>
 </html>
