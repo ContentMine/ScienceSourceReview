@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
     "net/http"
+    "net/url"
 	"strings"
 
 	pongo "github.com/flosch/pongo2"
@@ -152,6 +153,46 @@ func getArticleAnnotationList(queryservice_url string, article_id string) (strin
 	return title, annotations, nil
 }
 
+
+/*const GRAPH_SPARQL = `
+#defaultView:Dimensions
+SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
+WHERE {
+         ?anchor1 wdt:P12 wd:%s;
+                  wdt:P10 ?charnumber1.
+         ?anchor2 wdt:P12 wd:%s;
+                  wdt:P10 ?charnumber2.
+         ?term1 wdt:P19 ?anchor1.
+         ?term2 wdt:P19 ?anchor2.
+         ?term1 wdt:P15 ?disease.
+         ?term2 wdt:P15 ?drug.
+         ?term1 wdt:P16 "%s".
+         ?term2 wdt:P16 "%s".
+         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
+         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+`*/
+const GRAPH_SPARQL = `#defaultView:Dimensions
+SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
+WHERE {
+         ?anchor1 wdt:P16 wd:%s;
+                  wdt:P7 ?charnumber1.
+         ?anchor2 wdt:P16 wd:%s;
+                  wdt:P7 ?charnumber2.
+         ?term1 wdt:P21 ?anchor1.
+         ?term2 wdt:P21 ?anchor2.
+         ?term1 wdt:P18 ?disease.
+         ?term2 wdt:P18 ?drug.
+         ?term1 wdt:P20 "%s".
+         ?term2 wdt:P20 "%s".
+         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
+         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}`
+
 func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -163,10 +204,35 @@ func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+    // Can we extract the dictionary names?
+    disease_dictionary := ""
+    drug_dictionary := ""
+    graph_sparql := ""
 
+    // This is a bit of poor guesswork - in future the data model should support his better
+    for _, value := range annotations {
+        dict := value.Dictionary
+        if strings.Contains(dict, "drug") {
+            drug_dictionary = dict
+        } else {
+            disease_dictionary = dict
+        }
+    }
+
+    if (disease_dictionary != "") && (drug_dictionary != "") {
+    	encoded := url.PathEscape(fmt.Sprintf(GRAPH_SPARQL, id, id, disease_dictionary, drug_dictionary))
+    	encoded = strings.ReplaceAll(encoded, ":", "%3A")
+
+    	graph_sparql = fmt.Sprintf("%s%s", ctx.Configuration.QueryServiceEmbedURL, encoded)
+    }
+
+	w.WriteHeader(http.StatusOK)
 	t := pongo.Must(pongo.FromFile("templates/article.html"))
-	err = t.ExecuteWriter(pongo.Context{"annotations": annotations, "title": title, "ctx": ctx}, w)
+	err = t.ExecuteWriter(pongo.Context{
+	    "annotations": annotations,
+	    "title": title,
+	    "graph_sparql": graph_sparql,
+	    "ctx": ctx}, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

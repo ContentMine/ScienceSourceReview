@@ -109,6 +109,7 @@ div.flexouter {
 }
 
 div.flexinner {
+    padding: 0px 10px;
 }
 
 iframe {

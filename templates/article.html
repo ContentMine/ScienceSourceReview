@@ -42,12 +42,16 @@
         </div>
         <div class="flexinner">
 
-            <iframe class="annotation-graph"
-                src="http://sciencesource-query.wmflabs.org/embed.html#%23Co-occurrence%20%28filtered%29%20displayed%20for%20single%20article%20Q6679%0A%23defaultView%3ADimensions%0ASELECT%20%20%3FdrugLabel%20%3Fcharnumber2%20%3Fcharnumber1%20%3FdiseaseLabel%0AWHERE%20%7B%0A%20%20%20%20%20%20%20%20%20%3Fanchor1%20wdt%3AP12%20wd%3AQ6679%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt%3AP10%20%3Fcharnumber1.%0A%20%20%20%20%20%20%20%20%20%3Fanchor2%20wdt%3AP12%20wd%3AQ6679%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt%3AP10%20%3Fcharnumber2.%0A%20%20%20%20%20%20%20%20%20%3Fterm1%20wdt%3AP19%20%3Fanchor1.%0A%20%20%20%20%20%20%20%20%20%3Fterm2%20wdt%3AP19%20%3Fanchor2.%0A%20%20%20%20%20%20%20%20%20%3Fterm1%20wdt%3AP15%20%3Fdisease.%0A%20%20%20%20%20%20%20%20%20%3Fterm2%20wdt%3AP15%20%3Fdrug.%0A%20%20%20%20%20%20%20%20%20%3Fterm1%20wdt%3AP16%20%22infectiousdiseases%22.%0A%20%20%20%20%20%20%20%20%20%3Fterm2%20wdt%3AP16%20%22infectiousdiseasesdrugs%22.%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20FILTER%20%28xsd%3Ainteger%28%3Fcharnumber2%29%20%3E%20xsd%3Ainteger%28%3Fcharnumber1%29%29%0A%20%20%20%20%20%20%20%20%20FILTER%20%28xsd%3Ainteger%28%3Fcharnumber2%29%20-%20xsd%3Ainteger%28%3Fcharnumber1%29%20%3C%20200%29%0A%20%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D">
-                <p>Your browser does not support iFrames</p>
-            </iframe>
+            {% if graph_sparql %}
+                <iframe class="annotation-graph"
+                    src="{{ graph_sparql }}"
+                    <p>Your browser does not support iFrames</p>
+                </iframe>
+            {% endif %}
         </div>
 
     </div>
 
 {% endblock %}
+
+

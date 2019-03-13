@@ -41,6 +41,7 @@ type ServerConfig struct {
     OAuthConsumer OauthToken `json:"oauth"`
     WikibaseURL string `json:"wikibase_url"`
     QueryServiceURL string `json:"queryservice_url"`
+    QueryServiceEmbedURL string `json:"queryservice_embed_url"`
 }
 
 type ServerContext struct {
