@@ -5,13 +5,34 @@
         <link rel="stylesheet" href="/static/base.css">
     </head>
     <body>
-        <div id="header">
-            <h1><a href="/">Science Source Review</a></h1>
-        </div>
-        <div id="content">
-            {% block content %}{% endblock %}
-        </div>
-        <div id="footer">
+        <div id="wrapper">
+            <div id="nav">
+                <div id="logo"></div>
+                <ul>
+                    <li><a href="/">Main page</a></li>
+                    <li><a href="{{ ctx.Configuration.WikibaseURL }}">ScienceSource</a></li>
+                </ul>
+
+                <ul>
+                    <li>
+                        {% if ctx.AccessToken %}
+                            <a href="/deauth/">Log out</a>
+                        {% else %}
+                            <a href="/auth/">Authenticate</a>
+                        {% endif %}
+                </ul>
+            </div>
+
+            <div>
+                <div id="header">
+                    <h1><a href="/">Science Source Review</a></h1>
+                </div>
+                <div id="content">
+                    {% block content %}{% endblock %}
+                </div>
+                <div id="footer">
+                </div>
+            </div>
         </div>
     </body>
 </html>

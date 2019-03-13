@@ -4,9 +4,44 @@ body {
     font-family: sans-serif;
 }
 
+div#wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
 div#header a {
     text-decoration: none;
     color: black;
+}
+
+div#nav {
+    width: 160px;
+    top: 0px;
+    padding-left: 8px;
+}
+
+div#nav ul {
+    margin-left: 20px;
+    padding: 0.3em 0 0 0;
+}
+
+div#nav ul li {
+    line-height: 13.5px;
+    font-size: 0.75em;
+    font-family: sans-serif;
+    list-style-type: none;
+    list-style-image: none;
+    margin: 0px;
+    padding: 3px 0px;
+}
+
+div#nav ul li a {
+    text-decoration: none;
+}
+
+div#nav ul li a:hover {
+    text-decoration: underline;
 }
 
 div#content {
@@ -56,6 +91,16 @@ div#content th {
     text-align: center;
 }
 
+div#logo {
+    background-origin: padding-box;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-image: url("/static/scisrclogo.svg");
+    display: block;
+    width: 160px;
+    height: 160px;
+}
 
 div.flexouter {
     display: flex;
