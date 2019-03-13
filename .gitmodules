@@ -13,3 +13,9 @@
 [submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/juju/errors"]
 	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/juju/errors
 	url = https://github.com/juju/errors.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/sessions"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/sessions
+	url = https://github.com/gorilla/sessions.git
+[submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/securecookie"]
+	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/gorilla/securecookie
+	url = https://github.com/gorilla/securecookie.git
