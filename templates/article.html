@@ -4,34 +4,68 @@
 
     <h1>{{ title }}</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>
-                    Direct Link To Article
-                </th>
-                <td>
-                    <a href="{{article_page_url}}">{{article_page_url}}</a>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Science Source Item
-                </th>
-                <td>
-                    <a href="{{scisource_page_url}}">{{scisource_page_url}}</a>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Wikidata Item
-                </th>
-                <td>
-                    <a href="{{wikidata_page_url}}">{{wikidata_page_url}}</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="flexouter">
+        <div class="flexinner">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>
+                            Direct Link To Article
+                        </th>
+                        <td>
+                            <a href="{{article_page_url}}">{{article_page_url}}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Science Source Item
+                        </th>
+                        <td>
+                            <a href="{{scisource_page_url}}">{{scisource_page_url}}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Wikidata Item
+                        </th>
+                        <td>
+                            <a href="{{wikidata_page_url}}">{{wikidata_page_url}}</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flexinner">
+            <h2>Existing Reviews</h2>
+            <p>No reviews yet.</p>
+
+            <h2>Review</h2>
+                <p>Add a fact to the Science Source wikibase:</p>
+
+                {% if ctx.AccessToken %}
+                    <form action="." id="claimform" method="POST">
+                        <p>Claim
+                        <select name="druglist">
+                            {% for drug in drugs %}
+                                <option value="{{ drug.WikidataID }}">{{ drug.Label }}</option>
+                            {% endfor %}
+                        </select>
+                        is effective against
+                        <select name="diseaselist">
+                            {% for disease in diseases %}
+                                <option value="{{ disease.WikidataID }}">{{ disease.Label }}</option>
+                            {% endfor %}
+                        </select>
+                        .</p>
+                        <p><input type="submit"></p>
+                    </form>
+                {% else %}
+                    <p>You must be <a href="/auth/">Authorized</a> to review.</p>
+                {% endif %}
+
+        </div>
+    </div>
 
     <h2>Annotations</h2>
 
@@ -48,18 +82,20 @@
                 <tbody>
                     {% for term, annotation in annotations %}
                         <tr>
-                            <td>{{ term }}</td>
+                            <td><a href="https://wikidata.org/wiki/item:{{ annotation.WikidataID }}">{{ term }}</a></td>
                             <td>{{ annotation.Count }}</td>
                             <td>{{ annotation.Dictionary }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+
         </div>
         <div class="flexinner" id="termgraph">
 
             {% if graph_sparql %}
                 <h3>Graph of close proximity drug and disease terms (within 200 characters).</h3>
+                <p>Note: If this graph is empty, then there are no terms that meet the proximity constraint.</p>
                 <iframe class="annotation-graph"
                     src="{{ graph_sparql }}"
                     <p>Your browser does not support iFrames</p>

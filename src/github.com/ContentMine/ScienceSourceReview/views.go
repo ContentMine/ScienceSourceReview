@@ -30,34 +30,34 @@ import (
 /*const ARTICLE_LIST_QUERY_SPARQL = `
 SELECT ?res ?page_ID ?article_text_title WHERE {
   ?res wdt:P3 wd:Q4.
-  OPTIONAL { ?res wdt:P25 ?page_ID. }
-  OPTIONAL { ?res wdt:P11 ?article_text_title. }
+  ?res wdt:P25 ?page_ID.
+  ?res wdt:P11 ?article_text_title.
 }
 `*/
 const ARTICLE_LIST_QUERY_SPARQL = `
 SELECT ?res ?page_ID ?article_text_title WHERE {
   ?res wdt:P11 wd:Q2.
-  OPTIONAL { ?res wdt:P12 ?page_ID. }
-  OPTIONAL { ?res wdt:P4 ?article_text_title. }
+  ?res wdt:P12 ?page_ID.
+  ?res wdt:P4 ?article_text_title.
 }
 `
 
 /*const ANNOTATION_LIST_QUERY_SPARQL = `
-SELECT ?res ?ScienceSource_article_title ?term ?dictionary WHERE {
+SELECT ?res ?term ?dictionary ?Wikidata_item_code WHERE {
   ?res wdt:P12 wd:%s.
-  ?annotation wdt:P19 ?res
-  OPTIONAL { ?res wdt:P20 ?ScienceSource_article_title. }
-  OPTIONAL { ?annotation wdt:P15 ?term. }
-  OPTIONAL { ?annotation wdt:P16 ?dictionary. }
+  ?annotation wdt:P19 ?res.
+  ?annotation wdt:P15 ?term.
+  ?annotation wdt:P16 ?dictionary.
+  ?annotation wdt:P2 ?Wikidata_item_code.
 }
 `*/
 const ANNOTATION_LIST_QUERY_SPARQL = `
-SELECT ?res ?ScienceSource_article_title ?term ?dictionary WHERE {
+SELECT ?res ?term ?dictionary ?Wikidata_item_code WHERE {
   ?res wdt:P16 wd:%s.
-  ?annotation wdt:P21 ?res
-  OPTIONAL { ?res wdt:P2 ?ScienceSource_article_title. }
-  OPTIONAL { ?annotation wdt:P18 ?term. }
-  OPTIONAL { ?annotation wdt:P20 ?dictionary. }
+  ?annotation wdt:P21 ?res.
+  ?annotation wdt:P18 ?term.
+  ?annotation wdt:P20 ?dictionary.
+  ?annotation wdt:P3 ?Wikidata_item_code.
 }
 `
 /*const GRAPH_SPARQL = `
@@ -125,6 +125,9 @@ const TITLE_PROPERTY = "http://wikibase.svc/prop/direct/P4"
 const PAGEID_PROPERTY = "http://wikibase.svc/prop/direct/P12"
 const WIKIDATAID_PROPERTY = "http://wikibase.svc/prop/direct/P3"
 
+// const CLAIM_PROPERTY_ID = "P26"
+const CLAIM_PROPERTY_ID = "P22"
+
 
 type ArticleInfo struct {
 	Title  string
@@ -133,8 +136,14 @@ type ArticleInfo struct {
 }
 
 type AnnotationInfo struct {
+    WikidataID string
 	Dictionary string
 	Count      int
+}
+
+type TermInfo struct {
+    Label string
+    WikidataID string
 }
 
 func (a ArticleInfo) RawItemID() string {
@@ -223,6 +232,7 @@ func getArticleAnnotationList(queryservice_url string, article_id string) (map[s
 			a.Count += 1
 		} else {
 			a = AnnotationInfo{
+			    WikidataID: binding["Wikidata_item_code"].Value,
 				Dictionary: binding["dictionary"].Value,
 				Count:      1,
 			}
@@ -266,12 +276,16 @@ func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) 
     graph_sparql := ""
 
     // This is a bit of poor guesswork - in future the data model should support his better
-    for _, value := range annotations {
+    drugs := make([]TermInfo, 0)
+    diseases := make([]TermInfo, 0)
+    for key, value := range annotations {
         dict := value.Dictionary
         if strings.Contains(dict, "drug") {
             drug_dictionary = dict
+            drugs = append(drugs, TermInfo{Label: key, WikidataID: value.WikidataID})
         } else {
             disease_dictionary = dict
+            diseases = append(diseases, TermInfo{Label: key, WikidataID: value.WikidataID})
         }
     }
 
@@ -286,6 +300,8 @@ func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) 
 	t := pongo.Must(pongo.FromFile("templates/article.html"))
 	err = t.ExecuteWriter(pongo.Context{
 	    "annotations": annotations,
+	    "drugs": drugs,
+	    "diseases": diseases,
 	    "title": title,
 	    "article_page_url": article_page_url,
 	    "scisource_page_url": scisource_page_url,
