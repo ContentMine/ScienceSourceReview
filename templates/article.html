@@ -38,36 +38,21 @@
 
         <div class="flexinner">
             <h2>Existing Reviews</h2>
-            <p>No reviews yet.</p>
+            {% if claims %}
+                <ul>
+                    {% for claim in claims %}
+                        <li>{{ claim.Drug.Term }} is used in treatment of {{ claim.Disease.Term }}.</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No claims yet.</p>
+            {% endif %}
 
-            <h2>Review</h2>
-                <p>Add a fact to the Science Source wikibase:</p>
-
-                {% if ctx.AccessToken %}
-                    <form action="." id="claimform" method="POST">
-                        <p>Claim
-                        <select name="druglist">
-                            {% for drug in drugs %}
-                                <option value="{{ drug.WikidataID }}">{{ drug.Label }}</option>
-                            {% endfor %}
-                        </select>
-                        is effective against
-                        <select name="diseaselist">
-                            {% for disease in diseases %}
-                                <option value="{{ disease.WikidataID }}">{{ disease.Label }}</option>
-                            {% endfor %}
-                        </select>
-                        .</p>
-                        <p><input type="submit"></p>
-                    </form>
-                {% else %}
-                    <p>You must be <a href="/auth/">Authorized</a> to review.</p>
-                {% endif %}
 
         </div>
     </div>
 
-    <h2>Annotations</h2>
+    <h2>Annotation Summary</h2>
 
     <div class="flexouter">
 
@@ -80,7 +65,7 @@
                         <th>Dictionary</th>
                 </thead>
                 <tbody>
-                    {% for term, annotation in annotations %}
+                    {% for term, annotation in summaries %}
                         <tr>
                             <td><a href="https://wikidata.org/wiki/item:{{ annotation.WikidataID }}">{{ term }}</a></td>
                             <td>{{ annotation.Count }}</td>
@@ -104,8 +89,71 @@
                 <p>There are not enough annotations found in this document to create the proximity graph.</p>
             {% endif %}
         </div>
-
     </div>
+
+
+    <h2>Review</h2>
+
+    <p>Having read the paper, please pick a pair of statements from the paper to indicate that a drug and disease are related.</p>
+
+    <form action="review/" method="post">
+
+        <div class="flexouter">
+
+            <div class="flexinner">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Drug</th>
+                            <th>Character Offset</th>
+                            <th>Drug Term Instance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for drug in drugs  %}
+                            <tr>
+                                <td><input type="radio" name="drug" value="{{ drug.AnnotationID }}"/></td>
+                                <td>{{ drug.Term }}</td>
+                                <td>{{ drug.Offset }}</td>
+                                <td>{{ drug.PrecedingPhrase }} <strong>{{ drug.Term }}</strong> {{ drug.FollowingPhrase }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="flexinner">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Disease</th>
+                            <th>Character Offset</th>
+                            <th>Disease Term Instance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for disease in diseases  %}
+                            <tr>
+                                <td><input type="radio" name="disease" value="{{ disease.AnnotationID }}"/></td>
+                                <td>{{ disease.Term }}</td>
+                                <td>{{ disease.Offset }}</td>
+                                <td>{{ disease.PrecedingPhrase }} <strong>{{ disease.Term }}</strong> {{ disease.FollowingPhrase }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if ctx.AccessToken %}
+            <input type="submit"/>
+        {% else %}
+            <p>You must be <a href="/auth/">authorized</a> to submit a review.</p>
+        {% endif %}
+
+    </form>
+
 
 {% endblock %}
 

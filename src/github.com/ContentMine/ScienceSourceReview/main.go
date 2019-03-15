@@ -15,10 +15,10 @@
 package main
 
 import (
-    "encoding/gob"
-    "encoding/json"
-    "flag"
-    "fmt"
+	"encoding/gob"
+	"encoding/json"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -27,33 +27,30 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/mrjones/oauth"
+
+	"github.com/ContentMine/wikibase"
 )
 
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
-type OauthToken struct {
-    Key string `json:"key"`
-    Secret string `json:"secret"`
-}
-
 type ServerConfig struct {
-    Address string `json:"address"`
-    OAuthConsumer OauthToken `json:"oauth"`
-    WikibaseURL string `json:"wikibase_url"`
-    QueryServiceURL string `json:"queryservice_url"`
-    QueryServiceEmbedURL string `json:"queryservice_embed_url"`
+	Address              string                       `json:"address"`
+	OAuthConsumer        wikibase.ConsumerInformation `json:"oauth"`
+	WikibaseURL          string                       `json:"wikibase_url"`
+	QueryServiceURL      string                       `json:"queryservice_url"`
+	QueryServiceEmbedURL string                       `json:"queryservice_embed_url"`
 }
 
 type ServerContext struct {
-    Configuration ServerConfig
-    AccessToken *oauth.AccessToken
-    OAuthConsumer *oauth.Consumer
-    CookieSession *sessions.Session
+	Configuration ServerConfig
+	AccessToken   *oauth.AccessToken
+	OAuthConsumer *oauth.Consumer
+	CookieSession *sessions.Session
 }
 
 func init() {
-    gob.Register(&oauth.RequestToken{})
-    gob.Register(&oauth.AccessToken{})
+	gob.Register(&oauth.RequestToken{})
+	gob.Register(&oauth.AccessToken{})
 }
 
 func loadConfig(path string) (ServerConfig, error) {
@@ -70,22 +67,22 @@ func loadConfig(path string) (ServerConfig, error) {
 
 // Simple wrapper so we can provide server config to each call
 type callWrapper struct {
-    ServerConfig
-    H func(*ServerContext, http.ResponseWriter, *http.Request)
+	ServerConfig
+	H func(*ServerContext, http.ResponseWriter, *http.Request)
 }
 
 func (cw callWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-    // We use the cookie session for storage as we're otherwise stateless, so may as well create
-    // it here once rather than all over the code
-    session, err := store.Get(r, "session-name")
+	// We use the cookie session for storage as we're otherwise stateless, so may as well create
+	// it here once rather than all over the code
+	session, err := store.Get(r, "session-name")
 	if err != nil {
-	    log.Printf("Error getting session: %v", err)
+		log.Printf("Error getting session: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-    // The OAuth consumer isn't thread safe, so we need to build one per request
+	// The OAuth consumer isn't thread safe, so we need to build one per request
 	consumer := oauth.NewConsumer(
 		cw.OAuthConsumer.Key,
 		cw.OAuthConsumer.Secret,
@@ -98,18 +95,18 @@ func (cw callWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		"oauth_consumer_key": cw.OAuthConsumer.Key,
 	}
 
-	ctx := ServerContext {
-	    Configuration: cw.ServerConfig,
-	    OAuthConsumer: consumer,
-	    CookieSession: session,
+	ctx := ServerContext{
+		Configuration: cw.ServerConfig,
+		OAuthConsumer: consumer,
+		CookieSession: session,
 	}
 
-    v := session.Values["auth"]
-    if t, ok := v.(*oauth.AccessToken); ok {
-        ctx.AccessToken = t
-    }
+	v := session.Values["auth"]
+	if t, ok := v.(*oauth.AccessToken); ok {
+		ctx.AccessToken = t
+	}
 
-    cw.H(&ctx, w, r)
+	cw.H(&ctx, w, r)
 }
 
 func main() {
@@ -122,18 +119,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-    log.Printf("config: %v", config)
+	log.Printf("config: %v", config)
 
 	r := mux.NewRouter()
 
 	r.Handle("/", callWrapper{config, homeHandler})
 	r.Handle("/article/{id:Q[0-9]+}/", callWrapper{config, articleHandler})
+	r.Handle("/article/{id:Q[0-9]+}/review/", callWrapper{config, reviewHandler})
 
 	r.Handle("/auth/", callWrapper{config, authHandler})
 	r.Handle("/token/", callWrapper{config, getTokenHandler})
 	r.Handle("/deauth/", callWrapper{config, deauthHandler})
 
-    r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	srv := &http.Server{
 		Handler:      r,

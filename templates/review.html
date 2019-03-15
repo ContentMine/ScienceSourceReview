@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Claim Review: {{ title }}</h1>
+
+    <p>Please confirm that you want to add a link between the following items on the Science Source wikibase:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Drug</th>
+                <th>Character Offset</th>
+                <th>Drug Term Instance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ drug.Term }}</td>
+                <td>{{ drug.Offset }}</td>
+                <td>{{ drug.PrecedingPhrase }} <strong>{{ drug.Term }}</strong> {{ drug.FollowingPhrase }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Disease</th>
+                <th>Character Offset</th>
+                <th>Disease Term Instance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ disease.Term }}</td>
+                <td>{{ disease.Offset }}</td>
+                <td>{{ disease.PrecedingPhrase }} <strong>{{ disease.Term }}</strong> {{ disease.FollowingPhrase }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form action="." method="POST">
+        <input type="checkbox" name="confirm" value="true"> I confirm I want to update Science Source to record this fact for eventual sumbmission to wikidata.</input>
+        <input type="hidden" name="drug" value="{{ drug.AnnotationID }}"/>
+        <input type="hidden" name="disease" value="{{ disease.AnnotationID }}"/>
+        <br><input type="submit">
+    </form>
+
+{% endblock %}
