@@ -102,6 +102,10 @@ div#logo {
     height: 160px;
 }
 
+div#termgraph h3 {
+    text-align: center;
+}
+
 div.flexouter {
     display: flex;
     flex-direction: row;

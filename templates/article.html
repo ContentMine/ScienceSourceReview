@@ -11,7 +11,23 @@
                     Direct Link To Article
                 </th>
                 <td>
-                    <a href="{{article.ItemID}}">{{article.ItemID}}</a>
+                    <a href="{{article_page_url}}">{{article_page_url}}</a>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Science Source Item
+                </th>
+                <td>
+                    <a href="{{scisource_page_url}}">{{scisource_page_url}}</a>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Wikidata Item
+                </th>
+                <td>
+                    <a href="{{wikidata_page_url}}">{{wikidata_page_url}}</a>
                 </td>
             </tr>
         </tbody>
@@ -40,13 +56,16 @@
                 </tbody>
             </table>
         </div>
-        <div class="flexinner">
+        <div class="flexinner" id="termgraph">
 
             {% if graph_sparql %}
+                <h3>Graph of close proximity drug and disease terms (within 200 characters).</h3>
                 <iframe class="annotation-graph"
                     src="{{ graph_sparql }}"
                     <p>Your browser does not support iFrames</p>
                 </iframe>
+            {% else %}
+                <p>There are not enough annotations found in this document to create the proximity graph.</p>
             {% endif %}
         </div>
 

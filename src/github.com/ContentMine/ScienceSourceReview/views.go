@@ -60,6 +60,71 @@ SELECT ?res ?ScienceSource_article_title ?term ?dictionary WHERE {
   OPTIONAL { ?annotation wdt:P20 ?dictionary. }
 }
 `
+/*const GRAPH_SPARQL = `
+#defaultView:Dimensions
+SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
+WHERE {
+         ?anchor1 wdt:P12 wd:%s;
+                  wdt:P10 ?charnumber1.
+         ?anchor2 wdt:P12 wd:%s;
+                  wdt:P10 ?charnumber2.
+         ?term1 wdt:P19 ?anchor1.
+         ?term2 wdt:P19 ?anchor2.
+         ?term1 wdt:P15 ?disease.
+         ?term2 wdt:P15 ?drug.
+         ?term1 wdt:P16 "%s".
+         ?term2 wdt:P16 "%s".
+         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
+         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+`*/
+const GRAPH_SPARQL = `#defaultView:Dimensions
+SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
+WHERE {
+         ?anchor1 wdt:P16 wd:%s;
+                  wdt:P7 ?charnumber1.
+         ?anchor2 wdt:P16 wd:%s;
+                  wdt:P7 ?charnumber2.
+         ?term1 wdt:P21 ?anchor1.
+         ?term2 wdt:P21 ?anchor2.
+         ?term1 wdt:P18 ?disease.
+         ?term2 wdt:P18 ?drug.
+         ?term1 wdt:P20 "%s".
+         ?term2 wdt:P20 "%s".
+         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
+         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}`
+
+const GET_ITEM_PROPERTIES_SPARQL = `
+SELECT ?propUrl ?propLabel ?valUrl
+WHERE
+{
+	hint:Query hint:optimizer 'None' .
+	{	BIND(wd:%s AS ?valUrl) .
+		BIND("N/A" AS ?propUrl ) .
+		BIND("identity"@en AS ?propLabel ) .
+	}
+	UNION
+	{	wd:%s ?propUrl ?valUrl .
+		?property ?ref ?propUrl .
+		?property rdf:type wikibase:Property .
+		?property rdfs:label ?propLabel
+	}
+}
+ORDER BY ?propUrl ?valUrl
+`
+
+// const TITLE_PROPERTY = "http://wikibase.svc/prop/direct/P11"
+// const PAGEID_PROPERTY = "http://wikibase.svc/prop/direct/P25"
+// const WIKIDATAID_PROPERTY = "http://wikibase.svc/prop/direct/P2"
+const TITLE_PROPERTY = "http://wikibase.svc/prop/direct/P4"
+const PAGEID_PROPERTY = "http://wikibase.svc/prop/direct/P12"
+const WIKIDATAID_PROPERTY = "http://wikibase.svc/prop/direct/P3"
+
 
 type ArticleInfo struct {
 	Title  string
@@ -118,20 +183,36 @@ func homeHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getArticleAnnotationList(queryservice_url string, article_id string) (string, map[string]AnnotationInfo, error) {
+func getArticleProperties(queryservice_url string, article_id string) (map[string]string, error) {
+
+	resp, err := wikibase.MakeSPARQLQuery(queryservice_url, fmt.Sprintf(GET_ITEM_PROPERTIES_SPARQL, article_id, article_id))
+	if err != nil {
+		return nil, err
+	}
+
+    res := make(map[string]string, len(resp.Results.Bindings))
+    for _, binding := range resp.Results.Bindings {
+        propUrl := binding["propUrl"].Value
+        value := binding["valUrl"].Value
+        if propUrl != "" && value != "" {
+            res[propUrl] = value
+        }
+    }
+
+    return res, nil
+}
+
+func getArticleAnnotationList(queryservice_url string, article_id string) (map[string]AnnotationInfo, error) {
 
 	resp, err := wikibase.MakeSPARQLQuery(queryservice_url, fmt.Sprintf(ANNOTATION_LIST_QUERY_SPARQL, article_id))
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
-	title := ""
 	annotations := make(map[string]AnnotationInfo, 0)
 
 	for _, binding := range resp.Results.Bindings {
-		if title == "" {
-			title = binding["ScienceSource_article_title"].Value
-		}
+
 		term := binding["term"].Value
 		if term == "" {
 			continue
@@ -150,56 +231,31 @@ func getArticleAnnotationList(queryservice_url string, article_id string) (strin
 
 	}
 
-	return title, annotations, nil
+	return annotations, nil
 }
-
-
-/*const GRAPH_SPARQL = `
-#defaultView:Dimensions
-SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
-WHERE {
-         ?anchor1 wdt:P12 wd:%s;
-                  wdt:P10 ?charnumber1.
-         ?anchor2 wdt:P12 wd:%s;
-                  wdt:P10 ?charnumber2.
-         ?term1 wdt:P19 ?anchor1.
-         ?term2 wdt:P19 ?anchor2.
-         ?term1 wdt:P15 ?disease.
-         ?term2 wdt:P15 ?drug.
-         ?term1 wdt:P16 "%s".
-         ?term2 wdt:P16 "%s".
-         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
-         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-`*/
-const GRAPH_SPARQL = `#defaultView:Dimensions
-SELECT  ?drugLabel ?charnumber2 ?charnumber1 ?diseaseLabel
-WHERE {
-         ?anchor1 wdt:P16 wd:%s;
-                  wdt:P7 ?charnumber1.
-         ?anchor2 wdt:P16 wd:%s;
-                  wdt:P7 ?charnumber2.
-         ?term1 wdt:P21 ?anchor1.
-         ?term2 wdt:P21 ?anchor2.
-         ?term1 wdt:P18 ?disease.
-         ?term2 wdt:P18 ?drug.
-         ?term1 wdt:P20 "%s".
-         ?term2 wdt:P20 "%s".
-         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
-         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
-
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}`
 
 func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	title, annotations, err := getArticleAnnotationList(ctx.Configuration.QueryServiceURL, id)
+	properties, err := getArticleProperties(ctx.Configuration.QueryServiceURL, id)
 	if err != nil {
-	    log.Printf("Error making query: %v", err)
+	    log.Printf("Error making property query: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	title := properties[TITLE_PROPERTY]
+	page_id := properties[PAGEID_PROPERTY]
+	wikidata_id := properties[WIKIDATAID_PROPERTY]
+
+	article_page_url := fmt.Sprintf("%s/?curid=%s", ctx.Configuration.WikibaseURL, page_id)
+	scisource_page_url := fmt.Sprintf("%s/wiki/item:%s", ctx.Configuration.WikibaseURL, id)
+	wikidata_page_url := fmt.Sprintf("https://wikidata.org/wiki/item:%s", wikidata_id)
+
+	annotations, err := getArticleAnnotationList(ctx.Configuration.QueryServiceURL, id)
+	if err != nil {
+	    log.Printf("Error making annotation query: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -231,6 +287,9 @@ func articleHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) 
 	err = t.ExecuteWriter(pongo.Context{
 	    "annotations": annotations,
 	    "title": title,
+	    "article_page_url": article_page_url,
+	    "scisource_page_url": scisource_page_url,
+	    "wikidata_page_url": wikidata_page_url,
 	    "graph_sparql": graph_sparql,
 	    "ctx": ctx}, w)
 	if err != nil {
