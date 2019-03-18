@@ -78,7 +78,9 @@ SELECT ?anchor ?annotation ?term ?dictionary ?Wikidata_item_code ?preceding_phra
 
 type AnnotationInfo struct {
 	AnchorID        wikibase.ItemPropertyType
+	AnchorRaw       string
 	AnnotationID    wikibase.ItemPropertyType
+	AnnotationRaw   string
 	Term            string
 	Dictionary      string
 	WikidataID      string
@@ -255,7 +257,9 @@ func getArticleAnnotationList(queryservice_url string, article_id string) ([]*An
         } else {
             new_annotation := AnnotationInfo{
                 AnchorID:        anchor_id,
+                AnchorRaw:       binding["anchor"].Value,
                 AnnotationID:    annotation_id,
+                AnnotationRaw:   binding["annotation"].Value,
                 Term:            binding["term"].Value,
                 Dictionary:      binding["dictionary"].Value,
                 WikidataID:      binding["Wikidata_item_code"].Value,

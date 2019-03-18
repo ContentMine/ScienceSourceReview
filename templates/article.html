@@ -38,6 +38,9 @@
 
         <div class="flexinner">
             <h2>Existing Reviews</h2>
+
+            <p>Please note, new claims can take a short while to show up.</p>
+
             {% if claims %}
                 <ul>
                     {% for claim in claims %}
@@ -114,7 +117,7 @@
                         {% for drug in drugs  %}
                             <tr>
                                 <td><input type="radio" name="drug" value="{{ drug.AnnotationID }}"/></td>
-                                <td>{{ drug.Term }}</td>
+                                <td><a href="{{ drug.AnnotationRaw }}">{{ drug.Term }}</a></td>
                                 <td>{{ drug.Offset }}</td>
                                 <td>{{ drug.PrecedingPhrase }} <strong>{{ drug.Term }}</strong> {{ drug.FollowingPhrase }}</td>
                             </tr>
@@ -136,7 +139,7 @@
                         {% for disease in diseases  %}
                             <tr>
                                 <td><input type="radio" name="disease" value="{{ disease.AnnotationID }}"/></td>
-                                <td>{{ disease.Term }}</td>
+                                <td><a href="{{ disease.AnnotationRaw }}">{{ disease.Term }}</a></td>
                                 <td>{{ disease.Offset }}</td>
                                 <td>{{ disease.PrecedingPhrase }} <strong>{{ disease.Term }}</strong> {{ disease.FollowingPhrase }}</td>
                             </tr>
