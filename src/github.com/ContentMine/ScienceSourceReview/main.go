@@ -76,10 +76,12 @@ func (cw callWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// We use the cookie session for storage as we're otherwise stateless, so may as well create
 	// it here once rather than all over the code
 	session, err := store.Get(r, "session-name")
-	if err != nil {
+	if session == nil && err != nil {
 		log.Printf("Error getting session: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	} else if err != nil {
+	    log.Printf("We got a session, but it had an error along the way: %v", err)
 	}
 
 	// The OAuth consumer isn't thread safe, so we need to build one per request
@@ -110,6 +112,10 @@ func (cw callWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+    if os.Getenv("SESSION_KEY") == "" {
+        panic(fmt.Errorf("Please set SESSION_KEY"))
+    }
 
 	var config_path string
 	flag.StringVar(&config_path, "config", "config.json", "configuration file, required")

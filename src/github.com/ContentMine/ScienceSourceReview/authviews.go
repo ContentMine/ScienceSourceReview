@@ -36,7 +36,13 @@ func authHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) {
 
 	// Make sure to save the token, we'll need it for AuthorizeToken()
 	ctx.CookieSession.Values[token.Token] = token.Secret
-	ctx.CookieSession.Save(r, w)
+
+	err = ctx.CookieSession.Save(r, w)
+	if err != nil {
+		log.Printf("Error saving token: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	http.Redirect(w, r, requestUrl, http.StatusTemporaryRedirect)
 }
