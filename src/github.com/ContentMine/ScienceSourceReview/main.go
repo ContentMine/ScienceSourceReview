@@ -31,7 +31,7 @@ import (
 	"github.com/ContentMine/wikibase"
 )
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+var store = sessions.NewCookieStore([]byte("SECURECOOKIES_NOT_USED_CURRENTLY"))
 
 type ServerConfig struct {
 	Address              string                       `json:"address"`

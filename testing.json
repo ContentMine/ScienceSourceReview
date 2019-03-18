@@ -1,0 +1,27 @@
+{
+    "address": "0.0.0.0:4242",
+    "oauth": {
+        "key": "OAUTH_CONSUMER_TOKEN",
+        "secret": "OAUTH_CONSUMER_SECRET"
+    },
+    "wikibase_url": "http://localhost:8181",
+    "queryservice_url": "http://localhost:8282/proxy/wdqs/bigdata/namespace/wdq/sparql",
+    "queryservice_embed_url": "http://localhost:8282/embed.html#",
+    "entity_prefix": "http://wikibase.svc/entity/",
+    "property_prefix": "http://wikibase.svc/prop/direct/",
+    "properties": {
+        "claim": "P22",
+        "title": "P4",
+        "pageid": "P12",
+        "wikidataid": "P3",
+        "instanceof": "P11",
+        "article": "Q2",
+        "anchorin": "P16",
+        "basedon": "P21",
+        "term": "P18",
+        "dictionary": "P20",
+        "offset": "P7",
+        "preceding_phrase": "P8",
+        "following_phrase": "P9"
+    }
+}
