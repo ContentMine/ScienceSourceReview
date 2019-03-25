@@ -116,10 +116,6 @@ func (cw callWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	if os.Getenv("SESSION_KEY") == "" {
-		panic(fmt.Errorf("Please set SESSION_KEY"))
-	}
-
 	var config_path string
 	flag.StringVar(&config_path, "config", "config.json", "configuration file, required")
 	flag.Parse()
