@@ -138,6 +138,14 @@ func main() {
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
+    address := config.Address
+    port := os.Getenv("PORT")
+    if len(port) > 0 {
+        // Running in Heroku, so add port
+        address = "0.0.0.0:" + port
+        log.Printf("Found port, starting on %s", address)
+    }
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         config.Address,
