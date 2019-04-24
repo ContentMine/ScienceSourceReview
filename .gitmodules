@@ -1,6 +1,6 @@
 [submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/ContentMine/wikibase"]
 	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/ContentMine/wikibase
-	url = git@github.com:ContentMine/wikibase.git
+	url = https://github.com/ContentMine/wikibase.git
 [submodule "src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/mrjones/oauth"]
 	path = src/github.com/ContentMine/ScienceSourceReview/vendor/github.com/mrjones/oauth
 	url = https://github.com/mrjones/oauth.git
