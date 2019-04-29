@@ -94,7 +94,7 @@ WHERE {
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }`
 
-const GET_ITEM_PROPERTIES_SPARQL = `
+const GET_ITEM_PROPERTIES_SPARQL_OLD = `
 SELECT ?propUrl ?propLabel ?valUrl
 WHERE
 {
@@ -112,6 +112,15 @@ WHERE
 }
 ORDER BY ?propUrl ?valUrl
 `
+const GET_ITEM_PROPERTIES_SPARQL = `
+SELECT ?propUrl ?propLabel ?valUrl
+WHERE
+{
+  wd:%s ?propUrl ?valUrl .
+}
+ORDER BY ?propUrl ?valUrl
+`
+
 
 // These are used to check the instance specific properties. We could in theory use the API to query the
 // property numbers, but the current implementation tries to avoid API requests for read, just using the
@@ -186,7 +195,10 @@ func homeHandler(ctx *ServerContext, w http.ResponseWriter, r *http.Request) {
 func (ctx *ServerContext) getArticleProperties(article_id string) (map[string]string, error) {
 
 	query := ctx.PrepareSPARQL(GET_ITEM_PROPERTIES_SPARQL)
-	resp, err := wikibase.MakeSPARQLQuery(ctx.Configuration.QueryServiceURL, fmt.Sprintf(query, article_id, article_id))
+
+	log.Printf("%v", fmt.Sprintf(query, article_id))
+
+	resp, err := wikibase.MakeSPARQLQuery(ctx.Configuration.QueryServiceURL, fmt.Sprintf(query, article_id))
 	if err != nil {
 		return nil, err
 	}
