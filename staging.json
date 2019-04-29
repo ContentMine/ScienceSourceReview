@@ -1,0 +1,27 @@
+{
+    "address": "0.0.0.0:4242",
+    "oauth": {
+        "key": "OAUTH_CONSUMER_TOKEN",
+        "secret": "OAUTH_CONSUMER_SECRET"
+    },
+    "wikibase_url": "http://stage-sciencesource.wmflabs.org",
+    "queryservice_url": "http://stage-sciencesource-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
+    "queryservice_embed_url": "http://stage-sciencesource-query.wmflabs.org/embed.html#",
+    "entity_prefix": "http://stage-sciencesource.wmflabs.org/entity/",
+    "property_prefix": "http://stage-sciencesource.wmflabs.org/prop/direct/",
+    "properties": {
+        "claim": "P26",
+        "title": "P11",
+        "pageid": "P25",
+        "wikidataid": "P2",
+        "instanceof": "P3",
+        "article": "Q4",
+        "anchorin": "P12",
+        "basedon": "P19",
+        "term": "P15",
+        "dictionary": "P16",
+        "offset": "P10",
+        "preceding_phrase": "P13",
+        "following_phrase": "P14"
+    }
+}
