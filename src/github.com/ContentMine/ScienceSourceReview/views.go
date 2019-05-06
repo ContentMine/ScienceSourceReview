@@ -88,8 +88,7 @@ WHERE {
          ?term2 wdt:{term} ?drug.
          ?term1 wdt:{dictionary} "%s".
          ?term2 wdt:{dictionary} "%s".
-         FILTER (xsd:integer(?charnumber2) > xsd:integer(?charnumber1))
-         FILTER (xsd:integer(?charnumber2) - xsd:integer(?charnumber1) < 200)
+         FILTER (abs (?charnumber2 - ?charnumber1) < 200)
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }`
