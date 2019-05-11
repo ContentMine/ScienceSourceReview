@@ -1,8 +1,8 @@
 {
     "address": "0.0.0.0:4242",
     "oauth": {
-        "key": "OAUTH_CONSUMER_TOKEN",
-        "secret": "OAUTH_CONSUMER_SECRET"
+        "key": "5be3018fb2a159a41f8772e5840a4d19",
+        "secret": "6a668f28baf1bf92376b8e768acbe4f7f66bcc06"
     },
     "wikibase_url": "http://sciencesource.wmflabs.org",
     "queryservice_url": "http://sciencesource-query.wmflabs.org/proxy/wdqs/bigdata/namespace/wdq/sparql",
