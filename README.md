@@ -14,7 +14,7 @@ BEFORE running Docker build you will need to create an OAuth Consumer Token/Secr
 * Consumer version - doesn't matter, so set it to v1.0 or such
 * Application description - set to something you'll remember
 
-* Callback URL - Set this to the main URL for the wikibase site (e.g., http://sciencesource.wmflabs.org/ - include the http:// and final /)
+* Callback URL - Set this to the main URL for the wikibase site (e.g., http://sciencesource.wmflabs.org/token/ - include the http:// and final /)
 
 The rest can remain at defaults. That last one is the most important, so please ensure you select that. If not then wikibase will require you to authorise the client via a web interface which will not work.
 
